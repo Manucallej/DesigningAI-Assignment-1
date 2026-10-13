@@ -1,30 +1,4 @@
 """
-Assignment 1 — training pipeline.
-
-You're using a script for this stage. If you'd rather use a notebook,
-write train.ipynb instead and delete this file — main.py refuses to run if
-it finds both train.py and train.ipynb, so exactly one of them must exist.
-
-Replace this docstring and everything below it with your own code. When run
-via `uv run python main.py train`, this file must, start to finish, with no
-manual steps in between:
-
-- Load your committed dataset.
-- Apply the feature engineering, preprocessing, and train/val/test split
-  consistent with the business framing you wrote in REPORT.md.
-- Train the same model — linear regression for a regression target,
-  logistic regression for a binary one — three ways, on the same split:
-  scikit-learn, a from-scratch PyTorch loop (Session 5's manual approach:
-  raw tensors, autograd, a manual gradient-step update), and the standard
-  torch.nn.Module + torch.optim workflow.
-- Evaluate all three against each other and against a naive baseline.
-- Save whatever app.py needs to build its dashboard without retraining
-  anything.
-
-How you structure the code beyond that — file layout, function
-boundaries, naming — is your call to make and be able to defend.
-"""
-"""
 Assignment 1 - training pipeline.
 
 Run with:  uv run python main.py train
@@ -101,7 +75,7 @@ def load_and_clean() -> pd.DataFrame:
 
 def engineer(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    df["total_nights"] = df["stays_in_week_nights"] + df["stays_in_weekend_nights"] 
+    df["total_nights"] = df["stays_in_week_nights"] + df["stays_in_weekend_nights"]
     df["total_guests"] = df["adults"] + df["children"] + df["babies"]
     df["has_agent"] = df["agent"].notna().astype(int)
     df["has_company"] = df["company"].notna().astype(int)
@@ -123,7 +97,8 @@ CATEGORICAL = [
     "is_repeated_guest", "has_agent", "has_company", "is_family",
     "arrival_date_month",
 ]
-FEATURES = NUMERIC + CATEGORICAL
+COUNTRY = ["country"]                       # high-cardinality (~178 values), handled on its own branch
+FEATURES = NUMERIC + CATEGORICAL + COUNTRY
 TARGET = "is_canceled"
 
 
@@ -143,14 +118,27 @@ def build_preprocessor() -> ColumnTransformer:
         ("scale", StandardScaler()), #rescales each column to mean 0 and standard deviation 1. This matters because logistic regression weighs features by size.
     ])
     cat = Pipeline([
-        ("impute", SimpleImputer(strategy="most_frequent")), #fills any missing number with that column’s mode.
+        ("impute", SimpleImputer(strategy="most_frequent")), #fills any missing category with that column’s mode.
         ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False)), #turns each category into 0/1 columns.
     ])
-    return ColumnTransformer([("num", num, NUMERIC), ("cat", cat, CATEGORICAL)])
+    # Country has ~178 values. max_categories keeps the most frequent markets and
+    # folds the long tail into one grouped bucket. Because the preprocessor is fit
+    # on train only, those top markets are learned from training data = no leakage.
+    # 11 = the ~10 biggest markets + 1 grouped "infrequent" bucket.
+    country = Pipeline([
+        ("impute", SimpleImputer(strategy="most_frequent")),
+        ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False,
+                                 max_categories=11)),
+    ])
+    return ColumnTransformer([
+        ("num", num, NUMERIC),
+        ("cat", cat, CATEGORICAL),
+        ("country", country, COUNTRY),
+    ])
 
 
 def auc(y, proba):
-    return roc_auc_score(y, proba) 
+    return roc_auc_score(y, proba)
 '''Personal note: AUC is the area under that curve, between 0 and 1.
 
 0.5 is a coin flip. The curve is the diagonal line; the model has no discriminating power. That’s why your baseline’s AUC is 0.5.

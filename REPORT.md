@@ -44,17 +44,16 @@ naive baseline. Do the three agree? If not, why not?*
 We're using logistic regression because we're predicting a binary output: either they cancel or they don't cancel the reservation. 
 model,accuracy,auc
 baseline (majority),0.6049,0.5
-sklearn,0.7415,0.8001
-manual pytorch,0.7428,0.7993
-standard pytorch,0.7418,0.8002
-
-
+sklearn,0.759,0.8362
+manual pytorch,0.7589,0.8352
+standard pytorch,0.7592,0.8362
+The best metric (total cost) was given by the threshold of 0.25, given through the equation (FN x 100 + FP x 40). The metrics of AUC are very near to the same between models, the only differences migght be attributed to optimization and how sklearn runs until it converges whilst the other two methods run for 600 epochs. 
 
 ## Limitations & next steps
 
 *Real limitations you found, and concretely how you'd address each one with
 more time or data — not generic hedging.*
-The costs input to the model are an estimation, and they will affect the actual economic loss that the model estimates in total. Additionally, model-wise, a logistic regression cannot capture interactions between variables, it only captures linear relationships. Another big limitation is that an important column: "Country", which will heavily affect Purchasing Power Parity and therefore room price and other important variables, is dropped. This is because of the limitation of a logistic regression with categorical variables. Since there are 178 options of countries in the dataset, there would be 178 new columns, one-hot encoded, added to the dataset at the moment of training. I personally wouldn't use a model that cannot capture interactions between variables and that has limitations for the variables and needs explicit feature engineering such as scaling to be able to digest some of the data. Additionally, I'd research more on the context and business case on how much money is actually being lost per FP and FN. 
+The costs input to the model are an estimation, and they will affect the actual economic loss that the model estimates in total. Additionally, model-wise, a logistic regression cannot capture interactions between variables, it only captures linear relationships. Another big limitation was the column: "Country", which heavily affects Purchasing Power Parity and therefore room price and other important variables. In the beginning this was dropped but in the updated preprocessing I decided to keep this variable (discussed in the previous paragraph). This variable was almost dropped because of the limitation of a logistic regression with categorical variables, having to one-hot encode categorical variables, which doesn't make sense for those like "country" where there are 100s of options. I personally wouldn't use a model that cannot capture interactions between variables and that has limitations for the variables and needs explicit feature engineering such as scaling to be able to digest some of the data. Additionally, I'd research more on the context and business case on how much money is actually being lost per FP and FN. 
 
 ## Generative AI use disclosure
 

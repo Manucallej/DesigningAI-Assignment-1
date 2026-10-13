@@ -1,4 +1,3 @@
-
 from pathlib import Path          # for building file paths that work on any machine
 import numpy as np                # numerical arrays and math
 import pandas as pd               # dataframes (reading the test CSV)
@@ -11,12 +10,13 @@ ROOT = Path(__file__).resolve().parent   # folder this script lives in (repo roo
 ART = ROOT / "artifacts"                 # where train.py saved the models and data
 
 # Must match train.py's feature lists / target.
+# adults / children / babies removed: perfectly collinear with total_guests (VIF = inf).
 NUMERIC = [                              # numeric columns, in the same order train.py used
     "lead_time", "total_nights", "total_guests", "adr",
     "booking_changes", "days_in_waiting_list", "total_requests",
     "previous_cancellations", "previous_bookings_not_canceled",
-    "required_car_parking_spaces", "adults", "children", "babies",
-    "arrival_date_week_number",
+    "required_car_parking_spaces", "arrival_date_week_number",
+    "adr_per_person", "cancel_ratio",
 ]
 CATEGORICAL = [                          # categorical columns, matching train.py
     "hotel", "meal", "market_segment", "distribution_channel",

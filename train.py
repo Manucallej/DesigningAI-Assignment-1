@@ -55,15 +55,24 @@ def engineer(df: pd.DataFrame) -> pd.DataFrame:
     df["has_company"] = df["company"].notna().astype(int)
     df["is_family"] = ((df["children"] + df["babies"]) > 0).astype(int)
     df["total_requests"] = df["total_of_special_requests"]
+    # ADR normalized by party size: separates "pricey because big group" from "pricey per head"
+    df["adr_per_person"] = df["adr"] / df["total_guests"]   # total_guests >= 1, guaranteed by cleaning
+    # A guest's personal cancellation rate from their history (0 for first-timers)
+    prev_total = df["previous_cancellations"] + df["previous_bookings_not_canceled"]
+    df["cancel_ratio"] = np.where(prev_total > 0,
+                                  df["previous_cancellations"] / prev_total, 0.0)
     return df
 
 
+# adults / children / babies are deliberately NOT here: total_guests = adults + children
+# + babies makes them perfectly collinear (VIF = inf, measured on train). total_guests and
+# is_family keep that information without the redundancy.
 NUMERIC = [
     "lead_time", "total_nights", "total_guests", "adr",
     "booking_changes", "days_in_waiting_list", "total_requests",
     "previous_cancellations", "previous_bookings_not_canceled",
-    "required_car_parking_spaces", "adults", "children", "babies",
-    "arrival_date_week_number",
+    "required_car_parking_spaces", "arrival_date_week_number",
+    "adr_per_person", "cancel_ratio",
 ]
 CATEGORICAL = [
     "hotel", "meal", "market_segment", "distribution_channel",

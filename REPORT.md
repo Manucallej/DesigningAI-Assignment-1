@@ -25,7 +25,7 @@ The hypothetical scenario this model serves is that it helps hotels predict canc
 the way — e.g. "segment X had defective data, so I excluded it and used a
 population-average default for scope Y at inference time; the impact of
 that choice is Z."*
-Replaced null values in numerical variables with the Median through simpleimputer. Replaced null values in categorical variables with the mode through simpleimputer. Scaled numerical variables through standardscaler because logistic regression would assign importance differently if they weren't scaled, and encoded categorical variables through a OneHot encoder, because a logistic regression can't handle categories. Turned the months into numerical by creating a dictionary (for the time split, they are used categorically later when fed into the model). Deleted variables that leaked or directly predicted the cancellation because they are information that we don't have at booking time such as "reservation_status", "reservation_status_date", and "assigned_room_type". I also removed impossible rows (negative ADR, ADR above 1000, zero-guest bookings) and built flag features (has_agent, has_company, is_family, total_nights, total_guests). Additionally, and importantly, since I found that country was an important variable but we couldn't one hot encode every single country, I kept the top 10 countries, which made up 84,43% of my dataset, and labeled the rest, "other". 
+Replaced null values in numerical variables with the Median through simpleimputer. Replaced null values in categorical variables with the mode through simpleimputer. Scaled numerical variables through standardscaler because logistic regression would assign importance differently if they weren't scaled, and encoded categorical variables through a OneHot encoder, because a logistic regression can't handle categories directly. Turned the months into numerical by creating a dictionary (for the time split, they are used categorically later when fed into the model). Deleted variables that leaked or directly predicted the cancellation because they are information that we don't have at booking time such as "reservation_status", "reservation_status_date", and "assigned_room_type". I also removed impossible rows (negative ADR, ADR above 1000, zero-guest bookings) and built flag features (has_agent, has_company, is_family, total_nights, total_guests). Additionally, and importantly, since I found that country was an important variable but we couldn't one hot encode every single country, I kept the top 10 countries, which made up 84,43% of my dataset, and labeled the rest, "other". I added two new important features, ADR per person (we used to have only ADR and party size), and cancel_ratio, which tells us how many times the guest has cancelled out of their total reservations in the past. I also removed the adults, children, and babies variables because they were colinear with total guests, but if I had to change something in my process I would've created a binary 0, 1 for children or babies instead of removing them. It's implied that there are adults, but the presence of children or babies might affect cancellation likelihood. 
 
 
 ## Modeling: three implementations, one model
@@ -37,9 +37,9 @@ naive baseline. Do the three agree? If not, why not?*
 We're using logistic regression because we're predicting a binary output: either they cancel or they don't cancel the reservation. 
 model,accuracy,auc
 baseline (majority),0.6049,0.5
-sklearn,0.759,0.8362
-manual pytorch,0.7589,0.8352
-standard pytorch,0.7592,0.8362
+sklearn,0.7592,0.8368
+manual pytorch,0.7574,0.8363
+standard pytorch,0.7592,0.8367
 The best metric (total cost) was given by the threshold of 0.25, given through the equation (FN x 100 + FP x 40). The metrics of AUC are very near to the same between models, the only differences migght be attributed to optimization and how sklearn runs until it converges whilst the other two methods run for 600 epochs. 
 
 ## Limitations & next steps

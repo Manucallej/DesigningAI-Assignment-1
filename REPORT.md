@@ -1,18 +1,11 @@
 # Assignment 1 Report
 
-*Delete this italic guidance as you fill in each section. You'll be asked to
-defend any of this without your code in front of you — write only what you
-can actually explain.*
-
 - **Name**: Manuela Calle
 - **Student ID**: 18754
 - **Email**: Mcalle.ieu2022@student.ie.edu
 - **Group**: BBADBA 5A 
 
 ## Dataset
-
-*What is it, where did you get it, what does one row represent, how many
-rows/columns, and why did you pick it.*
 
 It's a hotel booking dataset, I got it from kaggle: https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand
 One row represents one hotel booking. This is the shape of the dataset: rows, columns: (119390, 32). 

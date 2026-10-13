@@ -1,19 +1,4 @@
-"""
-Assignment 1 - Gradio dashboard.
 
-Run with:  uv run python main.py app
-
-Loads the preprocessor and all THREE trained models from artifacts/, loads the
-saved test frame, and runs inference here. Nothing is retrained.
-
-Views:
-  - Model comparison: test metrics + calibration (predicted prob vs actual rate).
-    For a yes/no target, calibration is the honest analogue of the regression
-    "prediction vs actual" plot: a perfect model sits on the diagonal.
-  - Distributions: target balance and a feature distribution split by outcome.
-  - Threshold & business cost: pick a model, move the threshold, watch the
-    confusion matrix and a cost number (tied to REPORT.md's framing) change.
-"""
 from pathlib import Path          # for building file paths that work on any machine
 import numpy as np                # numerical arrays and math
 import pandas as pd               # dataframes (reading the test CSV)

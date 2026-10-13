@@ -1,29 +1,3 @@
-"""
-Assignment 1 - training pipeline.
-
-Run with:  uv run python main.py train
-
-Start to finish, no manual steps:
-  1. Load the committed hotel_bookings.csv.
-  2. Drop leakage columns, clean bad rows, engineer features.
-  3. Split by arrival date (time-based) into train / val / test.
-  4. Fit preprocessing on train only.
-  5. Use the VALIDATION set to pick the L2 strength and the torch learning
-     rates (sparing tuning, as the brief allows).
-  6. Train logistic regression three ways on the SAME split, under the SAME
-     regularization, so the three are directly comparable:
-       - scikit-learn LogisticRegression
-       - a from-scratch PyTorch loop (raw tensors + autograd + manual step)
-       - the standard torch.nn.Module + torch.optim workflow
-  7. Evaluate all three plus a naive baseline on the test set.
-  8. Save the preprocessor, all three models, and the test frame so app.py can
-     load the models and run inference itself (it never retrains).
-
-Regularization alignment:
-  All three minimize  mean_BCE + LAMBDA * sum(w^2)  (intercept unpenalized).
-  sklearn minimizes   0.5*||w||^2 + C*sum_BCE, which per-sample equals
-  (1/(2*C*n))*||w||^2 + mean_BCE. Matching the two gives C = 1/(2*LAMBDA*n).
-"""
 
 from pathlib import Path
 import numpy as np

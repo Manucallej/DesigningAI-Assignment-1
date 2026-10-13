@@ -14,12 +14,17 @@ can actually explain.*
 *What is it, where did you get it, what does one row represent, how many
 rows/columns, and why did you pick it.*
 
+It's a hotel booking dataset, I got it from kaggle: https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand
+One row represents one hotel booking. This is the shape of the dataset: rows, columns: (119390, 32). 
+I picked it because it is of personal interest to me knowing what are the factors that go into hotel cancellations. I'm incredible invested in the hotel and hospitality industry, so learning about cancellation rates and overbooking appropriately is important to my field. 
+
 ## Business / real-life framing
 
 *The hypothetical scenario this model serves, and what that scenario implies
 for how you built the pipeline — target definition, whether a time-based
 split was necessary and why (or why not), which metric should drive the
 decision threshold and why.*
+
 
 ## Data preparation & feature engineering
 
@@ -28,12 +33,14 @@ the way — e.g. "segment X had defective data, so I excluded it and used a
 population-average default for scope Y at inference time; the impact of
 that choice is Z."*
 
+
 ## Modeling: three implementations, one model
 
 *Which model (linear or logistic regression) and why. A results table
 comparing scikit-learn, the manual PyTorch loop, and the standard
 torch.nn.Module/torch.optim workflow, on the same test set, against the
 naive baseline. Do the three agree? If not, why not?*
+
 
 ## Limitations & next steps
 

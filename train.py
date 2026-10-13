@@ -143,7 +143,7 @@ def build_preprocessor() -> ColumnTransformer:
         ("scale", StandardScaler()), #rescales each column to mean 0 and standard deviation 1. This matters because logistic regression weighs features by size.
     ])
     cat = Pipeline([
-        ("impute", SimpleImputer(strategy="most_frequent")), #fills any missing number with that column’s mean.
+        ("impute", SimpleImputer(strategy="most_frequent")), #fills any missing number with that column’s mode.
         ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False)), #turns each category into 0/1 columns.
     ])
     return ColumnTransformer([("num", num, NUMERIC), ("cat", cat, CATEGORICAL)])
